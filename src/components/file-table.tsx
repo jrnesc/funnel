@@ -24,6 +24,7 @@ interface FileData {
   columns: string[];
   status: string;
   financial_analysis?: string;
+  financial_model?: string;
 }
 
 interface FileTableProps {
@@ -103,6 +104,10 @@ export function FileTable({ files, isLoading }: FileTableProps) {
     router.push(`/pages/analysis/${fileId}`);
   };
 
+  const handleViewModel = (fileId: string) => {
+    router.push(`/pages/model/${fileId}`);
+  };
+
   return (
     <div className="w-full px-6">
       <Table>
@@ -110,6 +115,7 @@ export function FileTable({ files, isLoading }: FileTableProps) {
           <TableRow>
             <TableHead>Name</TableHead>
             <TableHead>Analysis</TableHead>
+            <TableHead>Model</TableHead>
             <TableHead>Download</TableHead>
             <TableHead>Created</TableHead>
           </TableRow>
@@ -125,6 +131,21 @@ export function FileTable({ files, isLoading }: FileTableProps) {
                     size="sm"
                     onClick={() => handleViewAnalysis(file._id)}
                     className="h-8 px-3 text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                  >
+                    <FileText className="h-4 w-4 mr-1" />
+                    View
+                  </Button>
+                ) : (
+                  <span className="text-sm text-muted-foreground">N/A</span>
+                )}
+              </TableCell>
+              <TableCell>
+                {file.financial_model ? (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleViewModel(file._id)}
+                    className="h-8 px-3 text-green-600 hover:text-green-800 hover:bg-green-50"
                   >
                     <FileText className="h-4 w-4 mr-1" />
                     View
