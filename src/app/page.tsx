@@ -190,7 +190,7 @@ export default function Funnel() {
           <div className="text-center mb-20">
             <h1 className="text-6xl font-bold mb-6 tracking-tight text-purple-800 font-inter">Funnel</h1>
             <p className="text-xl text-slate-600 font-light max-w-lg mx-auto leading-relaxed">
-              Financial statements processed in seconds
+              Analyse financial statements<br/>and generate reports in seconds
             </p>
           </div>
 
