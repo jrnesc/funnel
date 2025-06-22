@@ -123,7 +123,7 @@ export function FileTable({ files, isLoading }: FileTableProps) {
         <TableBody>
           {sortedFiles.map((file) => (
             <TableRow key={file._id}>
-              <TableCell className="text-sm text-muted-foreground text-center">{file.csv_filename}</TableCell>
+              <TableCell className="text-sm text-muted-foreground">{file.csv_filename}</TableCell>
               <TableCell className="text-center">
                 {file.financial_analysis ? (
                   <Button
