@@ -188,7 +188,7 @@ export default function Funnel() {
         <div className="max-w-4xl mx-auto px-8 py-16">
           {/* Header */}
           <div className="text-center mb-20">
-            <h1 className="text-5xl font-light mb-6 tracking-tight text-blue-600 font-inter">Funnel</h1>
+            <h1 className="text-6xl font-bold mb-6 tracking-tight text-purple-800 font-inter">Funnel</h1>
             <p className="text-xl text-slate-600 font-light max-w-lg mx-auto leading-relaxed">
               Financial statements processed in seconds
             </p>
@@ -301,8 +301,7 @@ export default function Funnel() {
             {/* File Table */}
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
               <div className="px-6 py-4 border-b border-slate-200">
-                <h3 className="text-lg font-medium text-slate-900">Recent Files</h3>
-                <p className="text-sm text-slate-500 mt-1">Files stored in your database</p>
+                <h3 className="text-lg font-medium text-slate-900">Processed Files</h3>
               </div>
               <FileTable files={dbFiles} isLoading={isLoadingFiles} />
             </div>

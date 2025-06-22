@@ -113,18 +113,18 @@ export function FileTable({ files, isLoading }: FileTableProps) {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Analysis</TableHead>
-            <TableHead>Model</TableHead>
-            <TableHead>Download</TableHead>
-            <TableHead>Created</TableHead>
+            <TableHead className="">Name</TableHead>
+            <TableHead className="text-center">Analysis</TableHead>
+            <TableHead className="text-center">Model</TableHead>
+            <TableHead className="text-center">Download</TableHead>
+            <TableHead className="">Created</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {sortedFiles.map((file) => (
             <TableRow key={file._id}>
-              <TableCell className="text-sm text-muted-foreground">{file.csv_filename}</TableCell>
-              <TableCell>
+              <TableCell className="text-sm text-muted-foreground text-center">{file.csv_filename}</TableCell>
+              <TableCell className="text-center">
                 {file.financial_analysis ? (
                   <Button
                     variant="ghost"
@@ -139,7 +139,7 @@ export function FileTable({ files, isLoading }: FileTableProps) {
                   <span className="text-sm text-muted-foreground">N/A</span>
                 )}
               </TableCell>
-              <TableCell>
+              <TableCell className="text-center">
                 {file.financial_model ? (
                   <Button
                     variant="ghost"
@@ -154,7 +154,7 @@ export function FileTable({ files, isLoading }: FileTableProps) {
                   <span className="text-sm text-muted-foreground">N/A</span>
                 )}
               </TableCell>
-              <TableCell>
+              <TableCell className="text-center">
                 {file.status === 'completed' && (
                   <Button
                     variant="ghost"
@@ -171,7 +171,7 @@ export function FileTable({ files, isLoading }: FileTableProps) {
                   </Button>
                 )}
               </TableCell>
-              <TableCell className="text-sm">{formatDate(file.upload_date)}</TableCell>
+              <TableCell className="text-sm text-center">{formatDate(file.upload_date)}</TableCell>
             </TableRow>
           ))}
         </TableBody>
