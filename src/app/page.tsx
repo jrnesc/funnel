@@ -9,6 +9,7 @@ import { FileTable } from "@/components/file-table"
 // Types
 interface UploadedFile {
   id: string
+  clientId: string
   name: string
   size: number
   status: "uploading" | "success" | "error"
@@ -124,29 +125,39 @@ export default function Funnel() {
   }, [])
 
   const handleFileUpload = async (filesToUpload: File[]) => {
-    const newFiles: UploadedFile[] = filesToUpload.map((file) => ({
-      id: Math.random().toString(36).substr(2, 9),
-      name: file.name,
-      size: file.size,
-      status: "uploading" as const,
-      ...generateMockMetadata(),
-    }))
+    const newFiles: UploadedFile[] = filesToUpload.map((file) => {
+      const clientId = `${file.name}-${file.size}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+      return {
+        id: clientId,
+        clientId,
+        name: file.name,
+        size: file.size,
+        status: "uploading" as const,
+        ...generateMockMetadata(),
+      }
+    })
 
     setFiles((prev) => [...prev, ...newFiles])
 
     // Upload files
-    for (const file of filesToUpload) {
-      const fileIndex = files.length + filesToUpload.indexOf(file)
+    for (let i = 0; i < filesToUpload.length; i++) {
+      const file = filesToUpload[i]
+      const clientId = newFiles[i].clientId
+      
       try {
         const result = await uploadPDF(file)
-        setFiles((prev) => prev.map((f, i) => (i === fileIndex ? { ...f, id: result.id, status: "success" } : f)))
+        setFiles((prev) => prev.map((f) => 
+          f.clientId === clientId 
+            ? { ...f, id: result.id, status: "success" } 
+            : f
+        ))
         
         // Refresh the file table after successful upload
         await loadFiles()
       } catch (error) {
         setFiles((prev) =>
-          prev.map((f, i) =>
-            i === fileIndex
+          prev.map((f) =>
+            f.clientId === clientId
               ? {
                   ...f,
                   status: "error",
@@ -159,8 +170,8 @@ export default function Funnel() {
     }
   }
 
-  const handleDeleteFile = (fileId: string) => {
-    setFiles((prev) => prev.filter((f) => f.id !== fileId))
+  const handleDeleteFile = (clientId: string) => {
+    setFiles((prev) => prev.filter((f) => f.clientId !== clientId))
   }
 
   return (
@@ -237,7 +248,7 @@ export default function Funnel() {
                   <div className="space-y-3 max-h-64 overflow-y-auto">
                     {files.map((file) => (
                       <div
-                        key={file.id}
+                        key={file.clientId}
                         className="flex items-center justify-between py-3 px-4 bg-slate-50 rounded-lg border border-slate-100 group"
                       >
                         <div className="flex items-center space-x-3 flex-1">
@@ -263,7 +274,7 @@ export default function Funnel() {
                           <button
                             onClick={(e) => {
                               e.stopPropagation()
-                              handleDeleteFile(file.id)
+                              handleDeleteFile(file.clientId)
                             }}
                             className="w-5 h-5 rounded-full border border-slate-400 bg-slate-100 flex items-center justify-center transition-all duration-200 hover:border-red-500 hover:bg-red-500 group/delete"
                             title="Remove file"
