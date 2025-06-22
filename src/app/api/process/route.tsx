@@ -40,13 +40,11 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
-    const fileName = file.name;
     
     const conversionFormData = new FormData();
     conversionFormData.append('file', file);
     
-    const conversionResponse = await fetch('http://127.0.0.1:8000/pdf-upload', {
+    const conversionResponse = await fetch('http://127.0.0.1:8000/analyze-financials', {
       method: 'POST',
       body: conversionFormData,
     });

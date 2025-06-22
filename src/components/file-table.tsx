@@ -9,8 +9,9 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Download } from 'lucide-react';
+import { Download, FileText } from 'lucide-react';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface FileData {
   _id: string;
@@ -22,6 +23,7 @@ interface FileData {
   row_count: number;
   columns: string[];
   status: string;
+  financial_analysis?: string;
 }
 
 interface FileTableProps {
@@ -31,6 +33,12 @@ interface FileTableProps {
 
 export function FileTable({ files, isLoading }: FileTableProps) {
   const [downloadingFiles, setDownloadingFiles] = useState<Set<string>>(new Set());
+  const router = useRouter();
+
+  // Sort files by upload_date in descending order (most recent first)
+  const sortedFiles = [...files].sort((a, b) => 
+    new Date(b.upload_date).getTime() - new Date(a.upload_date).getTime()
+  );
 
   if (isLoading) {
     return (
@@ -56,30 +64,6 @@ export function FileTable({ files, isLoading }: FileTableProps) {
       hour: '2-digit',
       minute: '2-digit'
     });
-  };
-
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  };
-
-  const getStatusBadge = (status: string) => {
-    const statusColors = {
-      processing: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      completed: 'bg-green-100 text-green-800 border-green-200',
-      failed: 'bg-red-100 text-red-800 border-red-200',
-    };
-
-    return (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium border ${
-        statusColors[status as keyof typeof statusColors] || 'bg-gray-100 text-gray-800 border-gray-200'
-      }`}>
-        {status}
-      </span>
-    );
   };
 
   const handleDownload = async (file: FileData) => {
@@ -115,27 +99,40 @@ export function FileTable({ files, isLoading }: FileTableProps) {
     }
   };
 
+  const handleViewAnalysis = (fileId: string) => {
+    router.push(`/pages/analysis/${fileId}`);
+  };
+
   return (
     <div className="w-full px-6">
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Name</TableHead>
-            {/* <TableHead>Rows</TableHead>
-            <TableHead>Columns</TableHead> */}
-            <TableHead>Status</TableHead>
-            <TableHead>Created</TableHead>
+            <TableHead>Analysis</TableHead>
             <TableHead>Download</TableHead>
+            <TableHead>Created</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {files.map((file) => (
+          {sortedFiles.map((file) => (
             <TableRow key={file._id}>
               <TableCell className="text-sm text-muted-foreground">{file.csv_filename}</TableCell>
-              {/* <TableCell className="text-sm">{file.row_count.toLocaleString()}</TableCell>
-              <TableCell className="text-sm">{file.columns.length}</TableCell> */}
-              <TableCell>{getStatusBadge(file.status)}</TableCell>
-              <TableCell className="text-sm">{formatDate(file.upload_date)}</TableCell>
+              <TableCell>
+                {file.financial_analysis ? (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleViewAnalysis(file._id)}
+                    className="h-8 px-3 text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                  >
+                    <FileText className="h-4 w-4 mr-1" />
+                    View
+                  </Button>
+                ) : (
+                  <span className="text-sm text-muted-foreground">N/A</span>
+                )}
+              </TableCell>
               <TableCell>
                 {file.status === 'completed' && (
                   <Button
@@ -153,6 +150,7 @@ export function FileTable({ files, isLoading }: FileTableProps) {
                   </Button>
                 )}
               </TableCell>
+              <TableCell className="text-sm">{formatDate(file.upload_date)}</TableCell>
             </TableRow>
           ))}
         </TableBody>
